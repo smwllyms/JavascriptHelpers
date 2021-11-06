@@ -27,7 +27,7 @@ const require = async(path, type) => {
     // Create a promise we can use to wait until the script is loaded
     const loadedPromise = new Promise((resolve) => {
         // When loaded resolve the promise and return to caller
-        elem.onload = resolve;
+        elem.onload = ()=>resolve();
     });
     // Wait for script to load
     await loadedPromise;
