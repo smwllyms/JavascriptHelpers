@@ -1,7 +1,7 @@
 // Waits for javascsript/css file from string path $path to load and add to page
 // Must be awaited upon, type is either "css" or "js"
 const require = async(path, type) => {
-    // Fetch the script
+    // Fetch the script (could add {mode: 'no-cors'})
     const response = await fetch(path);
     if (!response.ok) 
         return false;
