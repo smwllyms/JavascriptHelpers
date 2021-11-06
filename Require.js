@@ -15,14 +15,13 @@ const require = async(s) => {
     // Append it to the head to make it active
     document.head.appendChild(sc);
     // Create a promise we can use to wait until the script is loaded
-    let loaded = false;
     let promiseResolve;
     const loadedPromise = new Promise((resolve) => {
         // We will call this externally
         promiseResolve = resolve;
     });
     // When loaded resolve the promise and return to caller
-    sc.onload = function(){ loaded = true; promiseResolve();}
+    sc.onload = promiseResolve;
     // Wait for script to load
     await loadedPromise;
 }
