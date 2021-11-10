@@ -1,0 +1,143 @@
+<html>
+    <head>
+        <style>
+            body {
+                text-align: center;
+                vertical-align: middle;
+                height: 100%;
+                padding: 0;
+                margin:0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+            #container {
+                width:90%;
+                height:80%;
+                background-color: aqua;
+                display: inline-flex;
+                margin:auto;
+            }
+            textarea {
+                padding:10px;
+            }
+            #input {
+                height:80%;
+                padding: 20px;
+                width:50%;
+                text-align: left;
+            }
+            p {
+                display: block;
+                margin: 5px 0;
+            }
+            #args {
+                width: 100%;
+                height:40px;
+            }
+            .txt {
+                width:100%;
+                height:80%;
+            }
+            #run-btn {
+                padding:10px 20px;
+                background-color: green;
+                color:white;
+                text-align: center;
+                line-height: 30px;
+                height:30px;
+                width:90%;
+                display: block;
+            }
+            #result {
+                height: 100%;
+            }
+         </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="input">
+                <p><b>Arguments</b></p>
+                <textarea placeholder="Arguments (eg: a1=5,a2='hello!')" id="args"></textarea>
+                <p><b>Function/Code</b> <a onclick="loadDemo()">(load demo) </a><a onclick="clearFn()">(clear) </a></p>
+                <textarea class ="txt" placeholder="Function/Code" id="fn"></textarea>
+                <a href="#run" id="run-btn">Run >> </a>
+            </div>
+            <div id="input">
+                <p><b>Output</b></p>
+                <textarea class ="txt" id="result" placeholder="Output"></textarea>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+    let btn = document.getElementById("run-btn");
+    let fn = document.getElementById("fn");
+    let args = document.getElementById("args");
+    let out = document.getElementById("result");
+
+    // Logs string s to output textarea
+    const myLog = function(s) {
+        out.value += s + '\n';
+    };
+
+    // On click run button
+    btn.addEventListener("click", () => {
+        // In case we errored last time
+        out.style.backgroundColor = "white";
+        // Reset output
+        out.value = "";
+        // Isolate args
+        let argVals = args.value.split(",");
+        // This will be our main function string
+        let s = "";
+        // Prepend each arg as a global var for user function
+        argVals.forEach(a=>{
+            s += a + ";";
+        });
+        // Get the user function string
+        let func = fn.value;
+        // Replace all calls to console.log with our log function
+        func = func.replaceAll("console.log(", "myLog(");
+        // Append it to our main function string
+        s += func;
+        try {
+            // Log result
+            myLog(new Function(s)());
+        }
+        catch (err) {
+            // Log errors
+            myLog("ERROR: " + err);
+            // Set output background to red color
+            out.style.backgroundColor = "MistyRose";
+        }
+    });
+
+    // On click load demo button
+    function loadDemo() {
+        args.value = 'a1="Sam", a2=3';
+        fn.value = 'function sqr(n) { return n*n; }\n\nfunction demo(name, num) {\n    return name + " has " + sqr(num) + " apples!";\n}\n\nconsole.log("You can do this, too!");\n\n// Return the value to see output!\nreturn demo(a1,a2);';
+    }
+
+    // On click clear button
+    function clearFn() {
+        fn.value = "";
+    }
+
+    // On tab
+    fn.addEventListener('keydown', function(e){ 
+        if (e.keyCode == 9)  {
+            // Stop from tabbing
+            e.preventDefault();
+            // Save initial cursor position
+            let pos = fn.selectionStart;
+            // Just add 4 spaces (a tab) at cursor position
+            fn.value = fn.value.slice(0, pos) + "    " + fn.value.slice(pos);
+            // Also move cursor
+            fn.selectionStart = pos + 4;
+            fn.selectionEnd = pos + 4;
+
+        }
+    });
+</script>
